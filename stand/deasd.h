@@ -15,55 +15,43 @@ typedef struct
 {
 	int firstTime, lastTime;
 	int firstCount, lastCount;
-	int timer, ticks, total, minutes, typeText, destroyTexture;
+	int timer, ticks, total, minutes, typeText, destTexas, destTexas2;
 	int minCount, secCount;
 	time_t pressed;
-	tm *cPressed;
-} Timer;
+	tm *cPressed;	
+} timer;
 
-typedef struct
+typedef struct 
 {
 	SDL_Rect boxes;
-	SDL_Rect volume;
-	SDL_Rect stop;
-	SDL_Rect next;
-} Boxes;
+} boxes;
 
-typedef struct
+typedef struct 
 {
-	Boxes boxes[10];
-	Boxes volume[3];
-	Boxes stop[2];
-	Boxes next[2];
+	boxes boxes[10];
 	int typing;
 	int length;
 	char *text;
 	char *genText;
-} Prog;
+} prog;
 
-typedef struct
+typedef struct 
 {
 	SDL_Texture *timeText;
 	SDL_Texture *numText;
-} Text;
+} tText;
 
-typedef struct
+typedef struct 
 {
-	SDL_Texture *volText;
-} newText;
-
-typedef struct
-{
-	Text tText[10];
-	Text numText[10];
+	tText tText[10];
+	tText numText[10];
 	SDL_Window *window;
 	SDL_Renderer *renderer;
 	SDL_Texture *background;
 	TTF_Font *arial;
-} Draw;
+} draw;
 
-typedef struct
+typedef struct 
 {
 	Mix_Music *backgroundSound;
-	int volume;
-} Sound;
+} sound;

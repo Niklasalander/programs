@@ -1,8 +1,9 @@
 #include "defs.h"
 
-bool clickedChoose(int box, prog *prog, int mouseX, int mouseY, SDL_Event event);
+bool clickedChoose(int box, Prog *prog, int mouseX, int mouseY, SDL_Event event);
+bool clickedVolume(int box, Prog *prog, int mouseX, int mouseY, SDL_Event event);
 
-void processEvents(prog *prog, timer *timer, int *running)
+void processEvents(Prog *prog, Timer *timer, int *running, Sound *sound)
 {
 	int millisec = 60000;
 	int mouseX, mouseY;
@@ -18,7 +19,7 @@ void processEvents(prog *prog, timer *timer, int *running)
         SDL_GetMouseState(&mouseX, &mouseY);
 
 		/***** lets the user press the boxes for the timer *****/
-		if (clickedChoose(0, &*prog, mouseX, mouseY, event)) //PUT THIS IN FUNCTION
+		if (clickedChoose(0, &*prog, mouseX, mouseY, event))
 			setTimer(*&timer, 1);
 
 		else if (clickedChoose(1, &*prog, mouseX, mouseY, event))
@@ -32,6 +33,12 @@ void processEvents(prog *prog, timer *timer, int *running)
 
 		else if (clickedChoose(5, &*prog, mouseX, mouseY, event))
 			setTimer(*&timer, 40);
+
+        /***** lets the user change volume *****/
+        if (clickedVolume(1, &*prog, mouseX, mouseY, event))
+            changeVolume(*&sound, 1);
+        else if (clickedVolume(2, &*prog, mouseX, mouseY, event))
+            changeVolume(*&sound, 2);
 
         /***** lets the user choose timer with keybinds *****/
         if (event.type == SDL_KEYDOWN && prog->typing == 0)
@@ -75,10 +82,9 @@ void processEvents(prog *prog, timer *timer, int *running)
         }
 
         /***** lets the user type a desired time *****/
-        if (mouseX > 512 && mouseX < 768 && mouseY > 240 && mouseY < 320 && event.type == SDL_MOUSEBUTTONDOWN)
+        if (clickedChoose(4, &*prog, mouseX, mouseY, event))
         {
             initTextString(&*prog);
-            printf("asdasdn\n");
             prog->typing = 1;
         }
         // text blink function call
@@ -101,10 +107,11 @@ void processEvents(prog *prog, timer *timer, int *running)
                     //free(prog->text);
 
                 }
-                else if (event.type == SDL_TEXTINPUT)
+                else if (event.type == SDL_TEXTINPUT && prog->length < 5)
                 {
                     strcat(prog->text, event.text.text);
                     printf("%s\n", prog->text);
+                    printf("%d\n", prog->length);
                 }
                 else if (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_ESCAPE)
                 {
@@ -123,7 +130,7 @@ void processEvents(prog *prog, timer *timer, int *running)
     SDL_StopTextInput();
 }
 
-bool clickedChoose(int box, prog *prog, int mouseX, int mouseY, SDL_Event event)
+bool clickedChoose(int box, Prog *prog, int mouseX, int mouseY, SDL_Event event)
 {
     if(mouseX > prog->boxes[box].boxes.x && mouseY > prog->boxes[box].boxes.y &&
         mouseX < prog->boxes[box].boxes.x + prog->boxes[box].boxes.w && 
@@ -135,8 +142,20 @@ bool clickedChoose(int box, prog *prog, int mouseX, int mouseY, SDL_Event event)
     else 
         return false;
 }
+bool clickedVolume(int box, Prog *prog, int mouseX, int mouseY, SDL_Event event)
+{
+    if(mouseX > prog->volume[box].volume.x && mouseY > prog->volume[box].volume.y &&
+        mouseX < prog->volume[box].volume.x + prog->volume[box].volume.w && 
+        mouseY < prog->volume[box].volume.y + prog->volume[box].volume.h &&
+        event.type == SDL_MOUSEBUTTONDOWN)
+    {
+        return true;
+    }
+    else 
+        return false;
+}
 
-void render(draw *windowF, prog *prog)
+void render(Draw *windowF, Prog *prog, newText *newText)
 {
     //SDL_SetRenderDrawColor(windowF->renderer, 123, 12, 123, 31);
 
@@ -158,7 +177,8 @@ void render(draw *windowF, prog *prog)
     surfaceMessage = TTF_RenderText_Blended(windowF->arial,prog->text,black);
     ipAddressText = SDL_CreateTextureFromSurface(windowF->renderer, surfaceMessage);
     prog->length = strlen(prog->text);
-    SDL_Rect rect = {560, 250, 200, 60};
+    //SDL_Rect rect = {560, 250, 200, 60};
+    SDL_Rect rect = {prog->boxes[4].boxes.x + 54, prog->boxes[4].boxes.y + 14, 160, 60};
     rect.w = 20*prog->length;
     SDL_FreeSurface(surfaceMessage);
     SDL_RenderCopy(windowF->renderer,ipAddressText,NULL,&rect);
@@ -197,10 +217,10 @@ void render(draw *windowF, prog *prog)
 
     // for 768p
     int x = 128;
-    int y = 94;
+    int y = 98;
     int w = 160;
     int h = 60;
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 6; i++)
     {
         int drawText = 1;
             SDL_Rect text = {x, y, w, h};
@@ -213,24 +233,38 @@ void render(draw *windowF, prog *prog)
             if (i == 1)
                 x += 308;
             if (i == 2)
-                y += 172;
+                y += 132;
             if (i == 3)
                 x -= 308;
             if (i == 4)
                 x -= 308;
-            if (i == 5)
-            {
-                y += 172;
-                x += 75;
-                w += 60;
-            }
-            if (i == 6)
-                x += 412;
-            if (i == 7)
-                y += 128;
-           if (i == 8)
-                x -= 412;
     }
+
+    for (int i = 6; i < 10; i++)
+    {
+        if (i == 6)
+        {
+            y += 132;
+            x += 75;
+            w += 60;
+        }
+        if (i == 7)
+            x += 412;
+        if (i == 8)
+            y += 128;
+       if (i == 9)
+            x -= 412;
+        SDL_Rect text = {x, y, w, h};
+        SDL_RenderCopy(windowF->renderer, windowF->tText[i].timeText, NULL, &text);
+    }
+
+    /***** draw volume *****/
+    x = prog->volume[0].volume.x + 10;
+    y = prog->volume[0].volume.y + 25;
+    w = 80, h = 50;
+    SDL_Rect volText = {x, y, w, h};
+    SDL_RenderCopy(windowF->renderer, newText->volText, NULL, &volText);
+
 
     //for (int i = 6; i < 10; i++)
       //  SDL_DestroyTexture(windowF->tText[i].timeText);

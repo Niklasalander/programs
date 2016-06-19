@@ -1,7 +1,7 @@
 #include "defs.h"
 
 /***** checks if a timer is done *****/
-void checkTimers(timer *timer, sound *sound)
+void checkTimers(Timer *timer, Sound *sound)
 {
 	int millisec = 60000;
     /*timer->lastTime = SDL_GetTicks();
@@ -53,7 +53,7 @@ void checkTimers(timer *timer, sound *sound)
 }
 
 /***** creates the timer *****/
-void setTimer(timer *timer, int minutes)
+void setTimer(Timer *timer, int minutes)
 {
 	int millisec = 60000;
     timer->minutes = minutes;

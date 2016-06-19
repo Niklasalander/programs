@@ -2,7 +2,7 @@
 /***** loading backgroud, sound *****/
 
 /***** creates a window and loads background image *****/
-void loadBackground(draw *windowF)
+void loadBackground(Draw *windowF)
 {
     windowF->window = SDL_CreateWindow("Stand",                            // window title
                                       SDL_WINDOWPOS_UNDEFINED,           // initial x position
@@ -22,7 +22,7 @@ void loadBackground(draw *windowF)
 }
 
 /***** loads the hardcoded text for the boxes *****/
-void loadTimeText(draw *timeText)
+void loadTimeText(Draw *timeText, newText *newText, Prog *prog, Sound *sound)
 {
 	//timeText->tText = (char*)malloc(100);
 
@@ -33,25 +33,31 @@ void loadTimeText(draw *timeText)
 	SDL_Surface *surfaceMessage;
 	surfaceMessage = TTF_RenderText_Blended(timeText->arial, "15 minutes", black);
 	timeText->tText[0].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
-	surfaceMessage = TTF_RenderText_Blended(timeText->arial, "20 minutes", black);
-	timeText->tText[1].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
-	surfaceMessage = TTF_RenderText_Blended(timeText->arial, "30 minutes", black);
-	timeText->tText[2].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
-	surfaceMessage = TTF_RenderText_Blended(timeText->arial, "60 minutes", black);
-	timeText->tText[3].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
-	surfaceMessage = TTF_RenderText_Blended(timeText->arial, "set time", black);
-	timeText->tText[4].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
-	surfaceMessage = TTF_RenderText_Blended(timeText->arial, "40 minutes", black);
-	timeText->tText[5].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
-
-	/***** saves numbers in text *****/
-	// removed
-
 	SDL_FreeSurface(surfaceMessage);
+    surfaceMessage = TTF_RenderText_Blended(timeText->arial, "20 minutes", black);
+	timeText->tText[1].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
+	SDL_FreeSurface(surfaceMessage);
+    surfaceMessage = TTF_RenderText_Blended(timeText->arial, "30 minutes", black);
+	timeText->tText[2].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
+	SDL_FreeSurface(surfaceMessage);
+    surfaceMessage = TTF_RenderText_Blended(timeText->arial, "60 minutes", black);
+	timeText->tText[3].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
+	SDL_FreeSurface(surfaceMessage);
+    surfaceMessage = TTF_RenderText_Blended(timeText->arial, "set time", black);
+	timeText->tText[4].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
+	SDL_FreeSurface(surfaceMessage);
+    surfaceMessage = TTF_RenderText_Blended(timeText->arial, "40 minutes", black);
+	timeText->tText[5].timeText = SDL_CreateTextureFromSurface(timeText->renderer, surfaceMessage);
+    SDL_FreeSurface(surfaceMessage);
+
+
+
+
+   // SDL_FreeSurface(surfaceMessage);
 }
 
 /***** loads all sounds *****/
-void loadSounds(sound *sound)
+void loadSounds(Sound *sound)
 {
     Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048);
     Mix_VolumeMusic(16);
@@ -59,7 +65,7 @@ void loadSounds(sound *sound)
 }
 
 /***** initiates variables *****/
-void initVariables(timer *timer, prog *prog)
+void initVariables(Timer *timer, Prog *prog, Sound *sound)
 {
     timer->ticks = 0;
     timer->timer = 0;
@@ -69,12 +75,12 @@ void initVariables(timer *timer, prog *prog)
     timer->firstCount = 9999999;
     timer->minCount = 0;
     timer->secCount = 0;
-    timer->destTexas = 0;
-    timer->destTexas2 = 0;
+    timer->destroyTexture = 0;
+    sound->volume = 16;
 }
 
 /***** makes a test string clean *****/
-void initTextString(prog *prog)
+void initTextString(Prog *prog)
 {
     prog->text = (char*)malloc(100);
     while(strlen(prog->text)!=0)
@@ -84,7 +90,7 @@ void initTextString(prog *prog)
     }
 }
 
-void initGenString(prog *prog)
+void initGenString(Prog *prog)
 {
     prog->genText = (char*)malloc(100);
     while(strlen(prog->genText)!=0)
@@ -95,38 +101,14 @@ void initGenString(prog *prog)
 }
 
 /***** creates SDL_Rects for the boxes *****/
-void initBoxes(prog *prog)
+void initBoxes(Prog *prog)
 {
-    /** 720p 
-    int x = 128, y = 80;
-    int w = 256, h = 80;
-
-    for (int i = 0; i < 10; i++)
-    {
-    	prog->boxes[i].boxes.x = x;
-    	prog->boxes[i].boxes.y = y;
-    	prog->boxes[i].boxes.w = w;
-    	prog->boxes[i].boxes.h = h;
-    	if (i == 0)
-    		x += 384;
-    	else if (i == 1)
-    		x += 384;
-    	else if (i == 2)
-    		y += 160;
-    	else if (i == 3)
-    		x -= 384;
-    	else if (i == 4)
-    		x -= 384;
-    	else if (i == 5)
-    		y += 240;
-    	else if (i >= 6)
-    		x += 277;
-    }
-    **/
+    /***** first 10 boxes *****/
     int x = 100, y = 84;
     int w = 208, h = 90;
+    int i;
 
-    for (int i = 0; i < 10; i++)
+    for (i = 0; i < 10; i++)
     {
         prog->boxes[i].boxes.x = x;
         prog->boxes[i].boxes.y = y;
@@ -137,14 +119,14 @@ void initBoxes(prog *prog)
         else if (i == 1)
             x += 308;
         else if (i == 2)
-            y += 172;
+            y += 132;
         else if (i == 3)
             x -= 308;
         else if (i == 4)
             x -= 308;
         else if (i == 5)
         {
-            y += 172;
+            y += 132;
             x += 75;
         }
         else if (i == 6)
@@ -155,10 +137,35 @@ void initBoxes(prog *prog)
             x -= 150;
     }
 
+    /***** volume box *****/
+    for (i = 0; i < 3; i++)
+    {
+        if (i == 0)
+        {
+            x = 460, y = 584;
+            w = 102, h = 102;            
+        }
+        else if (i == 1)
+        {
+            x = 484, y = 535;
+            w = 54, h = 44;   
+        }
+        else 
+            y = 692;
+        prog->volume[i].volume.x = x;
+        prog->volume[i].volume.y = y;
+        prog->volume[i].volume.w = w;
+        prog->volume[i].volume.h = h;
+    }
+
+    /***** stop and quit boxes *****/
+
+
+
     prog->genText = (char*)malloc(100);
 }
 
-void generateText(draw *genText, prog *prog, timer *timer, int *firstT, int *lastT)
+void generateText(Draw *genText, Prog *prog, Timer *timer, int *firstT, int *lastT, Sound *sound, newText *newText)
 {
     SDL_Color black = {0, 0, 0};
     SDL_Surface *surfaceMessage;
@@ -179,7 +186,7 @@ void generateText(draw *genText, prog *prog, timer *timer, int *firstT, int *las
         /***** current time *****/
         sprintf(prog->genText, "current time %.2d:%.2d", myT->tm_hour, myT->tm_min);
         surfaceMessage = TTF_RenderText_Solid(genText->arial, prog->genText, black);
-        if (timer->destTexas == 1)
+        if (timer->destroyTexture == 1)
             SDL_DestroyTexture(genText->tText[6].timeText);
         genText->tText[6].timeText = SDL_CreateTextureFromSurface(genText->renderer, surfaceMessage);
         SDL_FreeSurface(surfaceMessage);
@@ -187,7 +194,7 @@ void generateText(draw *genText, prog *prog, timer *timer, int *firstT, int *las
     	/***** time when pressed *****/
     	sprintf(prog->genText, "time started %.2d:%.2d", timer->cPressed->tm_hour, timer->cPressed->tm_min);
     	surfaceMessage = TTF_RenderText_Solid(genText->arial, prog->genText, black);
-        //  if (timer->destTexas == 1)
+        //  if (timer->destroyTexture == 1)
         SDL_DestroyTexture(genText->tText[7].timeText);
     	genText->tText[7].timeText = SDL_CreateTextureFromSurface(genText->renderer, surfaceMessage);
         SDL_FreeSurface(surfaceMessage);
@@ -196,7 +203,7 @@ void generateText(draw *genText, prog *prog, timer *timer, int *firstT, int *las
     	/***** time left *****/
     	sprintf(prog->genText, "time left %.2d:%.2d", timer->minCount, timer->secCount);
     	surfaceMessage = TTF_RenderText_Solid(genText->arial, prog->genText, black);
-        if (timer->destTexas == 1)
+        if (timer->destroyTexture == 1)
             SDL_DestroyTexture(genText->tText[8].timeText);
     	genText->tText[8].timeText = SDL_CreateTextureFromSurface(genText->renderer, surfaceMessage);
         SDL_FreeSurface(surfaceMessage);
@@ -204,19 +211,29 @@ void generateText(draw *genText, prog *prog, timer *timer, int *firstT, int *las
     	/***** show how long the session is *****/
     	sprintf(prog->genText, "%.2d minute session", timer->minutes);
     	surfaceMessage = TTF_RenderText_Solid(genText->arial, prog->genText, black);
-        //if (timer->destTexas == 1)
+        //if (timer->destroyTexture == 1)
         SDL_DestroyTexture(genText->tText[9].timeText);
     	genText->tText[9].timeText = SDL_CreateTextureFromSurface(genText->renderer, surfaceMessage);
         SDL_FreeSurface(surfaceMessage);
     	
 
-        if (timer->destTexas == 0)
-            timer->destTexas = 1;
+        /***** text for volume *****/
+        sprintf(prog->genText, "%.2d", sound->volume);
+        surfaceMessage = TTF_RenderText_Blended(genText->arial, prog->genText, black);
+        newText->volText = SDL_CreateTextureFromSurface(genText->renderer, surfaceMessage);
+        SDL_FreeSurface(surfaceMessage);
+
+
+
+
+
+        if (timer->destroyTexture == 0)
+            timer->destroyTexture = 1;
        }
 }
 
 /***** shuts down SDL *****/
-void shutDown(draw *draw, prog *prog)
+void shutDown(Draw *draw, Prog *prog)
 {
 	free(prog->text);
 	free(prog->genText);

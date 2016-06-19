@@ -2,10 +2,13 @@
 
 int main(int argc, char **argv)
 {
-    draw draw;
-    sound sound;
-    prog prog;
-    timer timer;
+    
+    
+    Timer timer;
+    Prog prog;
+    newText newText;
+    Draw draw;
+    Sound sound;
     int running = 1; //lägg in i struct
 
     SDL_Init(SDL_INIT_EVERYTHING);
@@ -13,9 +16,9 @@ int main(int argc, char **argv)
     TTF_Init();
 
     // initiate program
-    initVariables(&timer, &prog);
+    initVariables(&timer, &prog, &sound);
     loadBackground(&draw);
-    loadTimeText(&draw);
+    loadTimeText(&draw, &newText, &prog, &sound);
     loadSounds(&sound);
     initTextString(&prog);
     initBoxes(&prog);
@@ -25,22 +28,20 @@ int main(int argc, char **argv)
 
     while(running)
     {
-        //printf("1\n");
     	// check for user action
-		processEvents(&prog, &timer, &running);
-       // printf("2\n");
+		processEvents(&prog, &timer, &running, &sound);
+
 		// check if any timer is done
 		checkTimers(&timer, &sound);
-     //   printf("3\n");
+
         // update timers
-        generateText(&draw, &prog, &timer, &firstT, &lastT);
-      //  printf("4\n");
+        generateText(&draw, &prog, &timer, &firstT, &lastT, &sound, &newText);
+
         // draws everything
-        render(&draw, &prog);
-     //   printf("5\n");
+        render(&draw, &prog, &newText);
+
         // don't burn cpu
         SDL_Delay(10);
-      //  printf("6\n");
     }
 
     // shuts everything down safetly
