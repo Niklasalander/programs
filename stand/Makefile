@@ -12,7 +12,7 @@ LIBRARY_PATHS = -LC:\libraries\SDL2\lib -LC:\libraries\SDL2_image\lib -LC:\libra
 
 #COMPILER_FLAGS
 
-#-w suppresses all warnings
+#-w suppresses all warnings -MM -MG
 # -Wl,-subsystem,windows gets rid of the console window-ILP32 -MM -MG
 COMPILER_FLAGS = -w -Wall -Werror
 #
