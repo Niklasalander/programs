@@ -25,17 +25,18 @@ typedef struct
 typedef struct
 {
 	SDL_Rect boxes;
-	SDL_Rect volume;
 	SDL_Rect stop;
+	SDL_Rect volume;
 	SDL_Rect flap;
 	SDL_Rect mini;
 	SDL_Rect newFlap;
 	SDL_Rect song;
+	SDL_Rect songlist;
 	bool boxesH;
-	bool volumeH;
 	bool stopH;
+	bool volumeH;
 	bool flapH;
-	bool miniH; // click mini to change flap
+	bool miniH;
 	bool newFlapH;
 	bool songH;
 } Boxes;
@@ -43,23 +44,31 @@ typedef struct
 typedef struct
 {
 	Boxes boxes[10];
-	Boxes volume[3];
 	Boxes stop[2];
+	Boxes volume[3];
 	Boxes flap[2];
-	Boxes mini[10];
+	Boxes mini[11];
+	Boxes newFlap;
 	Boxes song[6];
 	Boxes boxesH[6];
-	Boxes volumeH[2];
 	Boxes stopH[2];
+	Boxes volumeH[2];
 	Boxes flapH[2];
-	Boxes miniH[10]; // click mini to change flap
+	Boxes miniH[11];
+	Boxes newFlapH;
 	Boxes songH[6];
+	Boxes songlist;
 
 	int shadeB;
-
+	int shadeQ;
+	int shadeV;
+	int shadeF;
+	int shadeS;
+	int shadeN;
+	int shadeM;
+	int test;
 
 	int typing;
-	int asdeerqqwec;
 	int length;
 	char *text;
 	char *genText;
@@ -70,6 +79,10 @@ typedef struct
 	SDL_Texture *timeText;
 	SDL_Texture *numText;
 	SDL_Texture *shade;
+	SDL_Texture *dBoxes;
+	SDL_Texture *sBoxes;
+	SDL_Texture *miniTimerS;
+	SDL_Texture *songlist;
 } Text;
 
 typedef struct
@@ -77,14 +90,18 @@ typedef struct
 	SDL_Texture *volText;
 	SDL_Texture *stop;
 	SDL_Texture *exit;
-} newText; // put this in Draw;
+	SDL_Texture *newFlap;
+} newText;
 
 typedef struct
 {
-	
 	Text tText[10];
 	Text numText[10];
 	Text shade[8];
+	Text dBoxes[9];
+	Text sBoxes[9];
+	Text miniTimerS[9];
+	Text songlist[4];
 	SDL_Texture *background;
 	SDL_Texture *miniTimer;
 	SDL_Texture *miniTimerT;
@@ -96,7 +113,7 @@ typedef struct
 typedef struct
 {
 	Mix_Music *backgroundSound;
-	int volume;
+	int volume, currSound;
 } Sound;
 
 typedef struct
@@ -110,6 +127,8 @@ typedef struct
 	int flapF;
 	int flapL;
 	int newFlap;
+	int deltaTimeMs;
+	int deltaTimeS;
 } Extf;
 
 typedef struct

@@ -13,31 +13,36 @@ void initFlap(Main *main, Wind *wind, Extf *extf, int *flap, int *max)
     *max += 1;
     *flap = *max - 1;
     extf->newFlap = 0;
-    printf("0 ");
+    
     loadBackground(&main[*max - 1], &*wind, &*flap);
-    printf("1 ");
+    
     initVariables(&main[*max - 1]);
-    printf("2 ");
+    
     loadTimeText(&main[*max - 1], &*wind);
-    printf("3 ");
-    loadSounds(&main[*max - 1]);
-    printf("4 ");
+    
+    loadSounds(&main[*max - 1], &*flap);
+    
     initTextString(&main[*max - 1]);
-    printf("5 ");
+
     initBoxes(&main[*max - 1]);
-    printf("6 ");
+
     initMiniTimer(&main[*max - 1], &*wind, &*flap);
-    printf("7 ");
+
     loadShade(&main[*max - 1], &*wind, &*flap);
-    printf("8 ");
+
     loadChooseSound(&main[*max - 1], &*wind, &*flap);
-    printf("9 ");
+
+    loadBoxPics(&main[*max - 1], &*wind, &*flap);
+
+    loadShadePics(&main[*max - 1], &*wind, &*flap);
+
+    initMiniTimerS(&main[*max - 1], &*wind, &*flap);
 }
 
 /***** creates a window and loads background image *****/
 void loadWindow(Wind *wind)
 {
-    wind->window = SDL_CreateWindow("Stand",                            // window title
+    wind->window = SDL_CreateWindow("Stand",                             // window title
                                       SDL_WINDOWPOS_UNDEFINED,           // initial x position
                                       SDL_WINDOWPOS_UNDEFINED,           // initial y position
                                       1024,                              // width, in pixels
@@ -49,35 +54,21 @@ void loadWindow(Wind *wind)
 
 void loadBackground(Main *main, Wind *wind, int *flap)
 {
-    //printf("b1\n");
-    // maybe only one renderer
-    //wind->renderer = SDL_CreateRenderer(wind->window, -1, SDL_RENDERER_ACCELERATED);
-    //printf("b1\n");
     SDL_Surface *background;
-    printf("b1\n");
     if (*flap == 0)
-    {
-        printf("f1\n");
-        background = IMG_Load("background768-0test.PNG");
-    }
-    printf("b2\n");
+        background = IMG_Load("images/background768-0.PNG");
+    
     if (*flap == 1)
-    {
-        printf("f2\n");
-        background = IMG_Load("background768-1.PNG");
-    }
-    printf("b3\n");
+        background = IMG_Load("images/background768-1.PNG");
+    
     if (*flap == 2)
-    {
-        printf("f2\n");
-        background = IMG_Load("background768-2.PNG");
-    }
+        background = IMG_Load("images/background768-2.PNG");
+    
+    if (*flap == 3)
+        background = IMG_Load("images/background768-3.PNG");
 
-    //SDL_Texture *bgtexture;
-    printf("b3\n");
     main->draw.background = SDL_CreateTextureFromSurface(wind->renderer, background);
     SDL_FreeSurface(background);
-    printf("b4\n");
 }
 
 /***** loads miniTimer images *****/
@@ -85,19 +76,48 @@ void initMiniTimer(Main *main, Wind *wind, int *flap)
 {
     SDL_Surface *miniTimer;
     if (*flap == 0)
-    {
-        miniTimer = IMG_Load("small-0.PNG");
-    }
+        miniTimer = IMG_Load("images/boxSmall-0.PNG");
+    
     if (*flap == 1)
-    {
-        miniTimer = IMG_Load("small-1.PNG");
-    }
+        miniTimer = IMG_Load("images/boxSmall-1.PNG");
+    
     if (*flap == 2)
-    {
-        miniTimer = IMG_Load("small-2.PNG");
-    }
+        miniTimer = IMG_Load("images/boxSmall-2.PNG");
+    
+    if (*flap == 3)
+        miniTimer = IMG_Load("images/boxSmall-3.PNG");
+    
     main->draw.miniTimer = SDL_CreateTextureFromSurface(wind->renderer, miniTimer);
     SDL_FreeSurface(miniTimer);
+}
+
+void initMiniTimerS(Main *main, Wind *wind, int *flap)
+{
+    SDL_Surface *miniTimerS;
+    for (int i = 0; i < 9; i++)
+    {
+        if (i == 0)
+            miniTimerS = IMG_Load("images/boxSmallS-0.PNG");
+        else if (i == 1)
+            miniTimerS = IMG_Load("images/boxSmallS-1.PNG");
+        else if (i == 2)
+            miniTimerS = IMG_Load("images/boxSmallS-0.PNG");
+        else if (i == 3)
+            miniTimerS = IMG_Load("images/boxSmallS-1.PNG");
+        else if (i == 4)
+            miniTimerS = IMG_Load("images/boxSmallS-2.PNG");
+        else if (i == 5)
+            miniTimerS = IMG_Load("images/boxSmallS-0.PNG");
+        else if (i == 6)
+            miniTimerS = IMG_Load("images/boxSmallS-1.PNG");
+        else if (i == 7)
+            miniTimerS = IMG_Load("images/boxSmallS-2.PNG");
+        else if (i == 8)
+            miniTimerS = IMG_Load("images/boxSmallS-3.PNG");
+
+        main->draw.miniTimerS[i].miniTimerS = SDL_CreateTextureFromSurface(wind->renderer, miniTimerS);
+        SDL_FreeSurface(miniTimerS);
+    }
 }
 
 /***** loads shade images *****/
@@ -108,28 +128,194 @@ void loadShade(Main *main, Wind *wind, int *flap)
     {
         for (int i = 0; i < 1; i++)
         {
-            shade = IMG_Load("shade-0-0.PNG");
+            shade = IMG_Load("images/shade-0-0.PNG");
             main->draw.shade[0].shade = SDL_CreateTextureFromSurface(wind->renderer, shade);
             SDL_FreeSurface(shade);
         }
     }
 }
 
+/***** loads all box pictures *****/
+void loadBoxPics(Main *main, Wind *wind, int *flap)
+{
+    int i;
+    SDL_Surface *boxPic0;
+    SDL_Surface *boxPic1;
+    SDL_Surface *boxPic2;
+    SDL_Surface *boxPic3;
+    SDL_Surface *boxPic4;
+    SDL_Surface *boxPic5;
+    SDL_Surface *boxPic6;
+    SDL_Surface *boxPic7;
+    SDL_Surface *boxPic8;
+    if (*flap == 0)
+    {
+        boxPic0 = IMG_Load("images/box-0-0.PNG");
+        boxPic1 = IMG_Load("images/box-0-1.PNG");
+        boxPic2 = IMG_Load("images/box-0-2.PNG");
+        boxPic3 = IMG_Load("images/box-0-3.PNG");
+        boxPic4 = IMG_Load("images/box-0-4.PNG");
+        boxPic5 = IMG_Load("images/box-0-5.PNG");
+        boxPic6 = IMG_Load("images/box-0-6.PNG");
+        boxPic7 = IMG_Load("images/box-0-7.PNG");
+        boxPic8 = IMG_Load("images/box-0-8.PNG");
+    }
+    else if (*flap == 1)
+    {
+        boxPic0 = IMG_Load("images/box-1-0.PNG");
+        boxPic1 = IMG_Load("images/box-1-1.PNG");
+        boxPic2 = IMG_Load("images/box-1-2.PNG");
+        boxPic3 = IMG_Load("images/box-1-3.PNG");
+        boxPic4 = IMG_Load("images/box-1-4.PNG");
+        boxPic5 = IMG_Load("images/box-1-5.PNG");
+        boxPic6 = IMG_Load("images/box-1-6.PNG");
+        boxPic7 = IMG_Load("images/box-1-7.PNG");
+        boxPic8 = IMG_Load("images/box-1-8.PNG");
+    }
+    else if (*flap == 2)
+    {
+        boxPic0 = IMG_Load("images/box-2-0.PNG");
+        boxPic1 = IMG_Load("images/box-2-1.PNG");
+        boxPic2 = IMG_Load("images/box-2-2.PNG");
+        boxPic3 = IMG_Load("images/box-2-3.PNG");
+        boxPic4 = IMG_Load("images/box-2-4.PNG");
+        boxPic5 = IMG_Load("images/box-2-5.PNG");
+        boxPic6 = IMG_Load("images/box-2-6.PNG");
+        boxPic7 = IMG_Load("images/box-2-7.PNG");
+        boxPic8 = IMG_Load("images/box-2-8.PNG");
+    }
+    else if (*flap == 3)
+    {
+        boxPic0 = IMG_Load("images/box-3-0.PNG");
+        boxPic1 = IMG_Load("images/box-3-1.PNG");
+        boxPic2 = IMG_Load("images/box-3-2.PNG");
+        boxPic3 = IMG_Load("images/box-3-3.PNG");
+        boxPic4 = IMG_Load("images/box-3-4.PNG");
+        boxPic5 = IMG_Load("images/box-3-5.PNG");
+        boxPic6 = IMG_Load("images/box-3-6.PNG");
+        boxPic7 = IMG_Load("images/box-3-7.PNG");
+        boxPic8 = IMG_Load("images/box-3-8.PNG");
+    }
+
+    main->draw.dBoxes[0].dBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic0);
+    main->draw.dBoxes[1].dBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic1);
+    main->draw.dBoxes[2].dBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic2);
+    main->draw.dBoxes[3].dBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic3);
+    main->draw.dBoxes[4].dBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic4);
+    main->draw.dBoxes[5].dBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic5);
+    main->draw.dBoxes[6].dBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic6);
+    main->draw.dBoxes[7].dBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic7);
+    main->draw.dBoxes[8].dBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic8);
+
+    SDL_FreeSurface(boxPic0);
+    SDL_FreeSurface(boxPic1);
+    SDL_FreeSurface(boxPic2);
+    SDL_FreeSurface(boxPic3);
+    SDL_FreeSurface(boxPic4);
+    SDL_FreeSurface(boxPic5);
+    SDL_FreeSurface(boxPic6);
+    SDL_FreeSurface(boxPic7);
+    SDL_FreeSurface(boxPic8);
+}
+
+/***** loads all box shades *****/
+void loadShadePics(Main *main, Wind *wind, int *flap)
+{
+    int i;
+    SDL_Surface *boxPic0;
+    SDL_Surface *boxPic1;
+    SDL_Surface *boxPic2;
+    SDL_Surface *boxPic3;
+    SDL_Surface *boxPic4;
+    SDL_Surface *boxPic5;
+    SDL_Surface *boxPic6;
+    SDL_Surface *boxPic7;
+    SDL_Surface *boxPic8;
+    if (*flap == 0)
+    {
+        boxPic0 = IMG_Load("images/boxS-0-0.PNG");
+        boxPic1 = IMG_Load("images/boxS-0-1.PNG");
+        boxPic2 = IMG_Load("images/boxS-0-2.PNG");
+        boxPic3 = IMG_Load("images/boxS-0-3.PNG");
+        boxPic4 = IMG_Load("images/boxS-0-4.PNG");
+        boxPic5 = IMG_Load("images/boxS-0-5.PNG");
+        boxPic6 = IMG_Load("images/boxS-0-6.PNG");
+        boxPic7 = IMG_Load("images/boxS-0-7.PNG");
+        boxPic8 = IMG_Load("images/boxS-0-8.PNG");
+    }
+    else if (*flap == 1)
+    {
+        boxPic0 = IMG_Load("images/boxS-1-0.PNG");
+        boxPic1 = IMG_Load("images/boxS-1-1.PNG");
+        boxPic2 = IMG_Load("images/boxS-1-2.PNG");
+        boxPic3 = IMG_Load("images/boxS-1-3.PNG");
+        boxPic4 = IMG_Load("images/boxS-1-4.PNG");
+        boxPic5 = IMG_Load("images/boxS-1-5.PNG");
+        boxPic6 = IMG_Load("images/boxS-1-6.PNG");
+        boxPic7 = IMG_Load("images/boxS-1-7.PNG");
+        boxPic8 = IMG_Load("images/boxS-1-8.PNG");
+    }
+    else if (*flap == 2)
+    {
+        boxPic0 = IMG_Load("images/boxS-2-0.PNG");
+        boxPic1 = IMG_Load("images/boxS-2-1.PNG");
+        boxPic2 = IMG_Load("images/boxS-2-2.PNG");
+        boxPic3 = IMG_Load("images/boxS-2-3.PNG");
+        boxPic4 = IMG_Load("images/boxS-2-4.PNG");
+        boxPic5 = IMG_Load("images/boxS-2-5.PNG");
+        boxPic6 = IMG_Load("images/boxS-2-6.PNG");
+        boxPic7 = IMG_Load("images/boxS-2-7.PNG");
+        boxPic8 = IMG_Load("images/boxS-2-8.PNG");
+    }
+    else if (*flap == 3)
+    {
+        boxPic0 = IMG_Load("images/boxS-3-0.PNG");
+        boxPic1 = IMG_Load("images/boxS-3-1.PNG");
+        boxPic2 = IMG_Load("images/boxS-3-2.PNG");
+        boxPic3 = IMG_Load("images/boxS-3-3.PNG");
+        boxPic4 = IMG_Load("images/boxS-3-4.PNG");
+        boxPic5 = IMG_Load("images/boxS-3-5.PNG");
+        boxPic6 = IMG_Load("images/boxS-3-6.PNG");
+        boxPic7 = IMG_Load("images/boxS-3-7.PNG");
+        boxPic8 = IMG_Load("images/boxS-3-8.PNG");
+    }
+
+    main->draw.sBoxes[0].sBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic0);
+    main->draw.sBoxes[1].sBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic1);
+    main->draw.sBoxes[2].sBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic2);
+    main->draw.sBoxes[3].sBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic3);
+    main->draw.sBoxes[4].sBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic4);
+    main->draw.sBoxes[5].sBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic5);
+    main->draw.sBoxes[6].sBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic6);
+    main->draw.sBoxes[7].sBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic7);
+    main->draw.sBoxes[8].sBoxes = SDL_CreateTextureFromSurface(wind->renderer, boxPic8);
+
+    SDL_FreeSurface(boxPic0);
+    SDL_FreeSurface(boxPic1);
+    SDL_FreeSurface(boxPic2);
+    SDL_FreeSurface(boxPic3);
+    SDL_FreeSurface(boxPic4);
+    SDL_FreeSurface(boxPic5);
+    SDL_FreeSurface(boxPic6);
+    SDL_FreeSurface(boxPic7);
+    SDL_FreeSurface(boxPic8);
+}
+
 void loadChooseSound(Main *main, Wind *wind, int *flap)
 {
     SDL_Surface *chooseSound;
     if (*flap == 0)
-    {
-        chooseSound = IMG_Load("chooseSound-0.PNG");
-    }
+        chooseSound = IMG_Load("images/chooseSound-0.PNG");
+    
     if (*flap == 1)
-    {
-        chooseSound = IMG_Load("chooseSound-1.PNG");
-    }
+        chooseSound = IMG_Load("images/chooseSound-1.PNG");
+    
     if (*flap == 2)
-    {
-        chooseSound = IMG_Load("chooseSound-2.PNG");
-    }
+        chooseSound = IMG_Load("images/chooseSound-2.PNG");
+    
+    if (*flap == 3)
+        chooseSound = IMG_Load("images/chooseSound-2.PNG");
+    
     main->draw.chooseSound = SDL_CreateTextureFromSurface(wind->renderer, chooseSound);
     SDL_FreeSurface(chooseSound);
 }
@@ -137,19 +323,20 @@ void loadChooseSound(Main *main, Wind *wind, int *flap)
 /***** loads the hardcoded text for the boxes *****/
 void loadTimeText(Main *main, Wind *wind)
 {
-	//timeText->tText = (char*)malloc(100);
-
 	main->draw.arial = TTF_OpenFont("arialbd.ttf", 48);
 
 	SDL_Color black = {0, 0, 0};
 
 	SDL_Surface *surfaceMessage;
+
 	surfaceMessage = TTF_RenderText_Blended(main->draw.arial, "15 minutes", black);
 	main->draw.tText[0].timeText = SDL_CreateTextureFromSurface(wind->renderer, surfaceMessage);
 	SDL_FreeSurface(surfaceMessage);
+
     surfaceMessage = TTF_RenderText_Blended(main->draw.arial, "20 minutes", black);
 	main->draw.tText[1].timeText = SDL_CreateTextureFromSurface(wind->renderer, surfaceMessage);
 	SDL_FreeSurface(surfaceMessage);
+
     surfaceMessage = TTF_RenderText_Blended(main->draw.arial, "30 minutes", black);
 	main->draw.tText[2].timeText = SDL_CreateTextureFromSurface(wind->renderer, surfaceMessage);
 	SDL_FreeSurface(surfaceMessage);
@@ -169,18 +356,33 @@ void loadTimeText(Main *main, Wind *wind)
 	main->newText.exit = SDL_CreateTextureFromSurface(wind->renderer, surfaceMessage);
     SDL_FreeSurface(surfaceMessage);
 
-   // SDL_FreeSurface(surfaceMessage);
+    surfaceMessage = TTF_RenderText_Blended(main->draw.arial, "yeeeeehaa", black);
+    main->draw.songlist[0].songlist = SDL_CreateTextureFromSurface(wind->renderer, surfaceMessage);
+    SDL_FreeSurface(surfaceMessage);
+    surfaceMessage = TTF_RenderText_Blended(main->draw.arial, "adiosamigo", black);
+    main->draw.songlist[1].songlist = SDL_CreateTextureFromSurface(wind->renderer, surfaceMessage);
+    SDL_FreeSurface(surfaceMessage);
+    surfaceMessage = TTF_RenderText_Blended(main->draw.arial, "quackers", black);
+    main->draw.songlist[2].songlist = SDL_CreateTextureFromSurface(wind->renderer, surfaceMessage);
+    SDL_FreeSurface(surfaceMessage);
+    surfaceMessage = TTF_RenderText_Blended(main->draw.arial, "roosters", black);
+    main->draw.songlist[3].songlist = SDL_CreateTextureFromSurface(wind->renderer, surfaceMessage);
+    SDL_FreeSurface(surfaceMessage);
+
+    surfaceMessage = TTF_RenderText_Blended(main->draw.arial, "new flap", black);
+    main->newText.newFlap = SDL_CreateTextureFromSurface(wind->renderer, surfaceMessage);
+    SDL_FreeSurface(surfaceMessage);
 }
 
 /***** loads all sounds *****/
-void loadSounds(Main *main)
+void loadSounds(Main *main, int *flap)
 {
-    /* GÖR SÅ FLERA LJUD KAN SPELAS */
     Mix_OpenAudio(44100,MIX_DEFAULT_FORMAT,2,2048);
     Mix_VolumeMusic(64);
-    main->sound.backgroundSound = Mix_LoadWAV("yeeeha.WAV");
-}
 
+    int num = *flap;
+    changeSound(num, &*main);
+}
 
 
 /***** initiates variables *****/
@@ -200,6 +402,12 @@ void initVariables(Main *main)
     main->timer.destroyTexture = 0;
     main->sound.volume = 64;
     main->prog.shadeB = 11;
+    main->prog.shadeQ = 11;
+    main->prog.shadeV = 11;
+    main->prog.shadeF = 11;
+    main->prog.shadeS = 11;
+    main->prog.shadeN = 11;
+    main->prog.shadeM = 11;
 }
 
 void initExtf(Extf *extf)
@@ -236,7 +444,6 @@ void initBoxes(Main *main)
     int x = 100, y = 84;
     int w = 208, h = 90;
     int i;
-
     for (i = 0; i < 10; i++)
     {
         main->prog.boxes[i].boxes.x = x;
@@ -255,18 +462,15 @@ void initBoxes(Main *main)
             x -= 308;
         else if (i == 5)
         {
-            y += 132;
-            x += 125;
+            x = 225, y = 346;
+            w = 265, h = 87;
         }
         else if (i == 6)
-            x += 50;
+            x = 536;
         else if (i == 7)
-        {
-            y += 128;
-            x += 50;
-        }
+            x = 586, y = 474;
         else if (i == 8)
-            x -= 150;
+            x = 175;
     }
 
     /***** volume box *****/
@@ -323,12 +527,36 @@ void initBoxes(Main *main)
     }
 
     /***** miniTimer boxes *****/
-    for (i = 0; i < 1; i++)
+    for (i = 0; i < 11; i++)
     {
         if (i == 0)
         {
             x = 472, y = 20;
             w = 80, h = 40;
+        }
+        if (i == 1)
+            x -= 50;
+        if (i == 2)
+            x += 90;
+        if (i == 3)
+            x = 372;
+        if (i == 4)
+            x += 90;
+        if (i == 5)
+            x += 90;
+        if (i == 6)
+            x = 322;
+        if (i == 7)
+            x += 90;
+        if (i == 8)
+            x += 90;
+        if (i == 9)
+            x += 90;
+
+        if (i == 10)
+        {
+            x = 322;
+            w = 350;
         }
         main->prog.mini[i].mini.x = x;
         main->prog.mini[i].mini.y = y;
@@ -337,6 +565,34 @@ void initBoxes(Main *main)
     }
 
     /***** choose song boxes *****/
+    for (i = 0; i < 5; i++)
+    {
+        if (i == 0)
+        {
+            x = 25, y = 368;
+            w = 177, h = 44;
+        }
+        else
+        {
+            y += 50;
+        }
+
+        main->prog.song[i].song.x = x;
+        main->prog.song[i].song.y = y;
+        main->prog.song[i].song.w = w;
+        main->prog.song[i].song.h = h;
+    }
+
+    /***** songlist box *****/
+    x = 25, y = 368;
+    w = 177, h = 250;
+    main->prog.songlist.songlist.x = x;
+    main->prog.songlist.songlist.y = y;
+    main->prog.songlist.songlist.w = w;
+    main->prog.songlist.songlist.h = h;
+
+
+    /***** choose song boxes ****
     for (i = 0; i < 6; i++)
     {
         if (i == 0)
@@ -354,7 +610,16 @@ void initBoxes(Main *main)
         main->prog.song[i].song.y = y;
         main->prog.song[i].song.w = w;
         main->prog.song[i].song.h = h;
-    }
+    }*/
+
+    /***** new flap box *****/
+    x = 821, y = 368;
+    w = 175, h = 40;
+   // w = 125, h = 20;
+    main->prog.newFlap.newFlap.x = x;
+    main->prog.newFlap.newFlap.y = y;
+    main->prog.newFlap.newFlap.w = w;
+    main->prog.newFlap.newFlap.h = h;
 
 
     main->prog.genText = (char*)malloc(100);
@@ -374,8 +639,6 @@ void generateText(Main *main, Wind *wind, int *firstT, int *lastT, int *test)
 
         *firstT = *lastT;
         
-
-        //time_t now = time(0);
 
         /***** current time *****/
         sprintf(main->prog.genText, "current time %.2d:%.2d", myT->tm_hour, myT->tm_min);
@@ -425,7 +688,7 @@ void generateText(Main *main, Wind *wind, int *firstT, int *lastT, int *test)
        }
 }
 
-void generateMiniText(Main *main, Wind *wind)
+void generateMiniText(Main *main, Wind *wind, int *flap)
 {
     SDL_Color black = {0, 0, 0};
     SDL_Surface *surfaceMessage;
@@ -437,12 +700,17 @@ void generateMiniText(Main *main, Wind *wind)
         SDL_DestroyTexture(main->draw.miniTimerT);
     main->draw.miniTimerT = SDL_CreateTextureFromSurface(wind->renderer, surfaceMessage);
     SDL_FreeSurface(surfaceMessage);
+
+    
+    
 }
 
 void destTexture(Main *main)
 {
     for (int i = 0; i < 10; i++)
         SDL_DestroyTexture(main->draw.tText[i].timeText);
+    for (int i = 0; i < 9; i++)
+        SDL_DestroyTexture(main->draw.miniTimerS[i].miniTimerS);
 
     SDL_DestroyTexture(main->newText.volText);
     SDL_DestroyTexture(main->newText.stop);
@@ -452,15 +720,11 @@ void destTexture(Main *main)
 
 void shutAll(Main *main, Wind *wind, int *max)
 {
-    printf("s1 ");
     SDL_DestroyWindow(wind->window);
     SDL_DestroyRenderer(wind->renderer);
     TTF_CloseFont(main[0].draw.arial);
     for (int i = 0; i < *max; i++)
-    {
-        printf("\nhorse: %d\n", i);
         shutDown(&main[i]);
-    }
 }
 
 /***** shuts down SDL *****/
@@ -469,16 +733,12 @@ void shutDown(Main *main)
 	free(main->prog.text);
     
 	free(main->prog.genText);
-    printf("s2 ");
-    
-    printf("s3 ");
+
     TTF_Quit();
-    printf("s4 ");
+
     Mix_CloseAudio();
-    printf("s5 ");
+
     Mix_FreeMusic(main->sound.backgroundSound);
     
-    printf("s6 ");
     SDL_Quit();
-    printf("s7 ");
 }
